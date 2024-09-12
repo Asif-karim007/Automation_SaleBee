@@ -9,7 +9,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import ElementClickInterceptedException
 
-total_prospects_created = 0
 
 class LoginInteraction:
     def __init__(self, driver):
@@ -133,8 +132,7 @@ class LoginInteraction:
                     new_prospect_number = self.extract_number(new_prospect_text)
                     created_prospects.append(prospect_name)  # Store the name of the created prospect
                     print(f"User {username}: Total prospect number after creating a new prospect: {new_prospect_number}")
-                    counter += 1
-                    total_prospects_created += 1  # Update the global counter
+                    counter += 1 
                     print(f"User {username}: Prospect {counter} created: {prospect_name}")
                 except Exception as e:
                     print(f"User {username}: Error occurred while counting new prospect total: {e}")

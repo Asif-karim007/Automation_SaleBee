@@ -20,8 +20,7 @@ def simulate_user(user_id):
     driver.quit()
     print(f"Finished session and closed browser for user {user_id}.")
 
-def simulate_concurrent_users(num_users):
-    global total_prospects_created  
+def simulate_concurrent_users(num_users): 
     threads = []
     for user_id in range(1, num_users + 1):
         thread = threading.Thread(target=simulate_user, args=(user_id,))
@@ -31,7 +30,7 @@ def simulate_concurrent_users(num_users):
     for thread in threads:
         thread.join()
         
-    print(f"Total number of prospects created by all users: {total_prospects_created}")
+
 
 
 # Main execution
