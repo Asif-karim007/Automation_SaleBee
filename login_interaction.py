@@ -75,20 +75,13 @@ class LoginInteraction:
         except Exception as e:
             print(f"Can not open prospect table: {e}")
             
-    def retry_click(element, retries=3, delay=2):
-        for _ in range(retries):
-            try:
-                element.click()
-                return
-            except ElementClickInterceptedException:
-                time.sleep(delay)
-        print("Failed to click element after retries.")
-
-            
 
     def createProspect(self, username):    
+        global total_prospects_created  # Use the global counter
         counter = 0
-        print("Press Enter to stop the process...\n")
+        created_prospects = []  # List to store created prospect names
+        print(f"User {username}: Press Enter to stop the process...\n")
+        
         while True: 
             if sys.stdin in select.select([sys.stdin], [], [], 0)[0]:
                 input()
@@ -97,13 +90,8 @@ class LoginInteraction:
             
             random_suffix = random.randint(10000, 99999)
             prospect_name = f"Automated Testing #{random_suffix}"
-                
+            
             try:
-                # Wait until modal is not visible
-                WebDriverWait(self.driver, 10).until(
-                    EC.invisibility_of_element_located((By.XPATH, "//*[@id='myModal']"))
-                )
-                
                 add_prospect_button = self.driver.find_element(By.XPATH, "//*[@id='ChildContainer']/div[1]/div[1]/div[1]/div[1]")
                 
                 # Wait until the element is clickable
@@ -111,10 +99,10 @@ class LoginInteraction:
                     EC.element_to_be_clickable((By.XPATH, "//*[@id='ChildContainer']/div[1]/div[1]/div[1]/div[1]"))
                 )
                 
-                # Scroll to the element and attempt the click with retry logic
+                # Scroll to the element and attempt the click
                 actions = ActionChains(self.driver)
                 actions.move_to_element(add_prospect_button).perform()
-                retry_click(add_prospect_button)  # Use retry_click here
+                add_prospect_button.click()
                 time.sleep(2)
                 self.driver.find_element(By.XPATH, "//*[@id='org-Name']").send_keys(prospect_name)
                 self.driver.find_element(By.XPATH, "//*[@id='myModal']/div/div/div[3]/div[1]/button").click()
@@ -128,7 +116,7 @@ class LoginInteraction:
                 refresh_button = WebDriverWait(self.driver, 20).until(
                     EC.visibility_of_element_located((By.XPATH, "//*[@id='ChildContainer']/div[1]/div[1]/div[1]/div[2]/a/i"))
                 )
-                retry_click(refresh_button)  # Use retry_click here
+                refresh_button.click()
                 time.sleep(2)
 
                 WebDriverWait(self.driver, 40).until(
@@ -142,11 +130,12 @@ class LoginInteraction:
                     )
                     new_prospect_text = new_prospect_element.text
                     new_prospect_number = self.extract_number(new_prospect_text)
-                    print(f"Total prospect number after creating a new prospect: {new_prospect_number}")
-                    counter += 1
-                    print(f"Prospect {counter} created: {prospect_name}")
+                    created_prospects.append(prospect_name)  # Store the name of the created prospect
+                    print(f"User {username}: Total prospect number after creating a new prospect: {new_prospect_number}")
+                    counter += 1 
+                    print(f"User {username}: Prospect {counter} created: {prospect_name}")
                 except Exception as e:
-                    print(f"Error occurred while counting new prospect total: {e}")
+                    print(f"User {username}: Error occurred while counting new prospect total: {e}")
                 
                 time.sleep(2)
 
@@ -155,12 +144,13 @@ class LoginInteraction:
                     print(f"User {username}: Successfully created a new prospect!")
                 else:
                     print(f"User {username}: Failed to create a new prospect.")
-                
+            
             except ElementClickInterceptedException as e:
-                print(f"Element click intercepted: {e}. Trying again after waiting...")
+                print(f"User {username}: Element click intercepted: {e}. Trying again after waiting...")
                 time.sleep(2)  
                 
             except Exception as e:
-                print(f"Error occurred while creating new prospect: {e}")
+                print(f"User {username}: Error occurred while creating new prospect: {e}")
 
-        print(f"Total number of prospects created automatically: {counter}")
+        print(f"User {username}: Total number of prospects created automatically: {counter}")
+        print(f"User {username}: All created prospect names: {created_prospects}")
