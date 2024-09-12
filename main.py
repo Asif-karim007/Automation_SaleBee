@@ -35,5 +35,5 @@ def simulate_concurrent_users(num_users):
 
 # Main execution
 if __name__ == "__main__":
-    num_users = 5 
+    num_users = 10
     simulate_concurrent_users(num_users)

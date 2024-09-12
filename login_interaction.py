@@ -88,14 +88,14 @@ class LoginInteraction:
                 print(f"User {username}: Stopping the process...")
                 break
             
-            random_suffix = random.randint(10000, 99999)
+            random_suffix = random.randint(1000000, 9999999)
             prospect_name = f"Automated Testing #{random_suffix}"
             
             try:
                 add_prospect_button = self.driver.find_element(By.XPATH, "//*[@id='ChildContainer']/div[1]/div[1]/div[1]/div[1]")
                 
                 # Wait until the element is clickable
-                WebDriverWait(self.driver, 20).until(
+                WebDriverWait(self.driver, 40).until(
                     EC.element_to_be_clickable((By.XPATH, "//*[@id='ChildContainer']/div[1]/div[1]/div[1]/div[1]"))
                 )
                 
@@ -103,21 +103,21 @@ class LoginInteraction:
                 actions = ActionChains(self.driver)
                 actions.move_to_element(add_prospect_button).perform()
                 add_prospect_button.click()
-                time.sleep(2)
+                time.sleep(4)
                 self.driver.find_element(By.XPATH, "//*[@id='org-Name']").send_keys(prospect_name)
                 self.driver.find_element(By.XPATH, "//*[@id='myModal']/div/div/div[3]/div[1]/button").click()
-                time.sleep(2)
+                time.sleep(4)
                 
-                WebDriverWait(self.driver, 20).until(
+                WebDriverWait(self.driver, 40).until(
                     EC.invisibility_of_element_located((By.XPATH, "/html/body/div[31]/div[4]"))
                 )
 
                 # Refresh the prospect table
-                refresh_button = WebDriverWait(self.driver, 20).until(
+                refresh_button = WebDriverWait(self.driver, 40).until(
                     EC.visibility_of_element_located((By.XPATH, "//*[@id='ChildContainer']/div[1]/div[1]/div[1]/div[2]/a/i"))
                 )
                 refresh_button.click()
-                time.sleep(2)
+                time.sleep(4)
 
                 WebDriverWait(self.driver, 40).until(
                     EC.visibility_of_element_located((By.XPATH, "//*[@id='prospectGrid']"))
@@ -125,7 +125,7 @@ class LoginInteraction:
 
                 # Get the new prospect number
                 try:
-                    new_prospect_element = WebDriverWait(self.driver, 20).until(
+                    new_prospect_element = WebDriverWait(self.driver, 40).until(
                         EC.presence_of_element_located((By.XPATH, '//*[@id="prospectstagegroup"]/div[1]'))
                     )
                     new_prospect_text = new_prospect_element.text
@@ -137,7 +137,7 @@ class LoginInteraction:
                 except Exception as e:
                     print(f"User {username}: Error occurred while counting new prospect total: {e}")
                 
-                time.sleep(2)
+                time.sleep(4)
 
                 # Compare prospect numbers
                 if new_prospect_number > self.current_prospect_number:
@@ -147,7 +147,7 @@ class LoginInteraction:
             
             except ElementClickInterceptedException as e:
                 print(f"User {username}: Element click intercepted: {e}. Trying again after waiting...")
-                time.sleep(2)  
+                time.sleep(4)  
                 
             except Exception as e:
                 print(f"User {username}: Error occurred while creating new prospect: {e}")
